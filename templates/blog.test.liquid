@@ -1,0 +1,89 @@
+<div class="common-page">
+  <div class="wide-inner">
+    <!-- パンくず -->
+    <div class="breadcrumb">
+      <p><a href="/">TOP</a> > <a href="/blogs/product">Web医事新報を読む</a> > 新着記事一覧</p>
+    </div>
+
+    <!-- メイン + サイドバー -->
+    <div class="page-row row between">
+      <!-- メイン -->
+      <div class="main-content">
+        <div class="page-body common-box">
+          <!-- 記事のタイトル -->
+          <h1 class="common-ttl">新着記事一覧</h1>
+
+          {% assign blog_handle = blog.handle %}
+          {% paginate blogs[blog_handle].articles by 99999 %}
+            <div class="page-list row between" id="pageList">
+              {% for article in blog.articles %}
+                <a href="{{ article.url }}" class="page-item{% if forloop.index > 15 %} hidden{% endif %}">
+                  <div class="img">
+                    <img src="{{ article.image | img_url: 'medium' }}" alt="{{ article.title -}}">
+                  </div>
+                  <div class="text">
+                    <div class="text-row row between">
+                      <ul class="category row">
+                        <li>学術特集</li>
+                        <li>総合診療,治療一般</li>
+                      </ul>
+                      <p class="date">{{ article.date }}</p>
+                    </div>
+                    <h3>
+                      <span class="new">NEW</span>{{ article.title -}}
+                      <img src="https://cdn.shopify.com/s/files/1/0576/3458/6727/files/icon_lock.png" alt="">
+                    </h3>
+                    <p class="name">田村 弘樹、生坂 政臣</p>
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          {% endpaginate %}
+
+          <div class="common-btn" id="loadMore" style="display: none;">
+            <a class="load-more-button">+もっと見る</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- サイドバー -->
+      {%- render 'sidebar' -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const pageList = document.getElementById('pageList');
+    const loadMoreBtn = document.getElementById('loadMore');
+
+    let displayedCount = 15;
+    const increment = 15;
+
+    function updateHiddenItems() {
+      return pageList.querySelectorAll('.page-item.hidden'); // 最新の hidden 状態を取得
+    }
+
+    if (updateHiddenItems().length > 0) {
+      loadMoreBtn.style.display = 'block';
+    }
+
+    loadMoreBtn.addEventListener('click', function () {
+      let hiddenItems = updateHiddenItems(); // 常に最新の hidden 状態を取得
+      let shown = 0;
+
+      hiddenItems.forEach((item) => {
+        if (shown < increment) {
+          item.classList.remove('hidden');
+          shown++;
+        }
+      });
+
+      displayedCount += shown;
+
+      if (updateHiddenItems().length === 0) {
+        loadMoreBtn.style.display = 'none';
+      }
+    });
+  });
+</script>
